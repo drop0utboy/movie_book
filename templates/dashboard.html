@@ -88,22 +88,21 @@
             
             <!-- 상영 시간표 조회 -->
             <div class="tab-pane fade" id="schedule">
-                <div id="showtimesList">
+                <h3>상영 시간표</h3>
+                <div>
                     {% if showtimes %}
-                        <table class="table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>상영 시간표 ID</th>
                                     <th>영화 제목</th>
-                                    <th>극장 이름</th>
-                                    <th>상영 시작 시간</th>
-                                    <th>상영 종료 시간</th>
+                                    <th>상영관</th>
+                                    <th>시작 시간</th>
+                                    <th>종료 시간</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for showtime in showtimes %}
                                     <tr>
-                                        <td>{{ showtime[0] }}</td>
                                         <td>{{ showtime[1] }}</td>
                                         <td>{{ showtime[2] }}</td>
                                         <td>{{ showtime[3] }}</td>
@@ -113,114 +112,97 @@
                             </tbody>
                         </table>
                     {% else %}
-                        <p>상영 시간표가 없습니다.</p>
+                        <p>상영 시간표 정보가 없습니다.</p>
                     {% endif %}
                 </div>
             </div>
             
             <!-- 예매하기 -->
             <div class="tab-pane fade" id="booking">
-                <h3>예매하기</h3>
-                <form id="bookingForm" action="{{ url_for('reserve') }}" method="post">
-                    <div class="form-group">
-                        <label for="showtimeSelect">상영 시간 선택:</label>
-                        <select class="form-control" id="showtimeSelect" name="showtime_id">
-                            {% for showtime in showtimes %}
-                                <option value="{{ showtime[0] }}">{{ showtime[1] }} - {{ showtime[2] }} - {{ showtime[3] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>좌석 선택:</label>
-                        <br>
-                        <div id="seatGrid" class="seat-grid">
-                            <!-- 좌석 버튼은 Ajax로 로드 -->
-                        </div>
-                    </div>
-                    <input type="hidden" name="seat_ids" id="seatIds">
-                    <button type="submit" class="btn btn-primary">예매하기</button>
-                </form>
+                <h3>영화 선택</h3>
+                <div class="form-group">
+                    <label for="showtimeSelect">상영 시간표 선택</label>
+                    <select class="form-control" id="showtimeSelect">
+                        <option value="">상영 시간표를 선택하세요</option>
+                        {% for showtime in showtimes %}
+                            <option value="{{ showtime[0] }}">{{ showtime[1] }} - {{ showtime[2] }} - {{ showtime[3] }} ~ {{ showtime[4] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <h3>좌석 선택</h3>
+                <div id="seatsContainer" class="seat-grid">
+                    <!-- 좌석 버튼들이 여기에 표시될 예정 -->
+                </div>
+                
+                <button class="btn btn-primary mt-3" id="reserveBtn">예매하기</button>
+            </div>
+            
+            <!-- 예매 내역/결제 -->
+            <div class="tab-pane fade" id="history">
+                <!-- 예매 내역/결제 구현 예정 -->
             </div>
         </div>
+        
+        <!-- 로그아웃 버튼 -->
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary mt-3">로그아웃</a>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
-            // 탭이 변경될 때마다 이벤트 처리
-            $('.nav-link').on('click', function() {
-                var tabId = $(this).attr('href');  
-                $(tabId).tab('show');  
-            });
-
-            // 초기 로딩 시 상영 시간표 데이터 가져오기
-            fetchShowtimes();
-            
-            // 영화 정보 조회 기능
+            // 영화 검색 기능
             $('#searchInput').on('input', function() {
-                var searchText = $(this).val().trim();
-                $.ajax({
-                    type: 'GET',
-                    url: '/search',
-                    data: { 'search_text': searchText },
-                    success: function(response) {
-                        $('#movieList').html(response);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
+                var searchText = $(this).val();
+                $.get('{{ url_for("search") }}', { search_text: searchText }, function(data) {
+                    $('#movieList').html(data);
                 });
             });
 
-            // 초기 로드 시 좌석 정보 불러오기
-            $('#showtimeSelect').change();
-        });
-
-        function fetchShowtimes() {
-            $.ajax({
-                type: 'GET',
-                url: '/showtimes', 
-                success: function(response) {
-                    $('#showtimesList').html(response);
-                },
-                error: function(error) {
-                    console.log(error);
+            // 상영 시간표 선택 시 좌석 정보 불러오기
+            $('#showtimeSelect').on('change', function() {
+                var showtimeId = $(this).val();
+                if (showtimeId) {
+                    $.get('/seats/' + showtimeId, function(data) {
+                        $('#seatsContainer').html(data);
+                    });
+                } else {
+                    $('#seatsContainer').html('');
                 }
             });
-        }
 
-        $('#showtimeSelect').change(function() {
-            var showtime_id = $(this).val();
-            $.ajax({
-                url: '/seats/' + showtime_id,
-                type: 'GET',
-                success: function(response) {
-                    $('#seatGrid').html(response);
-                    attachSeatSelectionHandlers();
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        function attachSeatSelectionHandlers() {
-            $('.seat-button').on('click', function() {
-                if (!$(this).hasClass('reserved')) {
+            // 좌석 선택 기능
+            $(document).on('click', '.seat-button', function() {
+                if ($(this).hasClass('reserved')) {
+                    alert('이미 예약된 좌석입니다.');
+                } else {
                     $(this).toggleClass('checked');
-                    updateSelectedSeats();
                 }
             });
-        }
 
-        function updateSelectedSeats() {
-            var selectedSeats = [];
-            $('.seat-button.checked').each(function() {
-                selectedSeats.push($(this).val());
+            // 예매하기 버튼 클릭 시
+            $('#reserveBtn').on('click', function() {
+                var selectedSeats = [];
+                $('#seatsContainer .seat-button.checked').each(function() {
+                    selectedSeats.push($(this).val());
+                });
+
+                if (selectedSeats.length === 0) {
+                    alert('좌석을 선택하세요.');
+                    return;
+                }
+
+                var showtimeId = $('#showtimeSelect').val();
+                $.post('{{ url_for("reserve") }}', {
+                    showtime_id: showtimeId,
+                    seat_ids: selectedSeats
+                }, function() {
+                    alert('예매가 완료되었습니다.');
+                    window.location.reload();
+                });
             });
-            $('#seatIds').val(selectedSeats.join(','));
-        }
+        });
     </script>
 </body>
 </html>

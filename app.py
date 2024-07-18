@@ -61,23 +61,33 @@ def dashboard():
     
     return render_template('dashboard.html', movies=movies, showtimes=showtimes)
 
+
+
+# 좌석 정보 가져오기
 @app.route('/seats/<int:showtime_id>')
 def seats(showtime_id):
-    cursor = db_connection.cursor()
-    query = "SELECT seat_id, reserved FROM seats WHERE showtime_id = %s"
+    query = """
+    SELECT se.seat_id, se.seat_number, 
+           CASE WHEN re.seat_id IS NOT NULL THEN 1 ELSE 0 END AS reserved
+    FROM seats se
+    LEFT JOIN reservations re ON se.seat_id = re.seat_id AND re.showtime_id = %s
+    """
     cursor.execute(query, (showtime_id,))
     seats = cursor.fetchall()
     
     seat_buttons_html = ""
     for seat in seats:
-        seat_id, reserved = seat
+        seat_id, seat_number, reserved = seat
         button_class = "seat-button"
         if reserved:
             button_class += " reserved"
-        seat_buttons_html += f'<button class="{button_class}" value="{seat_id}">{seat_id}</button>'
+        seat_buttons_html += f'<button class="{button_class}" value="{seat_id}">{seat_number}</button>'
     
     return seat_buttons_html
 
+
+
+# 좌석 예약 처리
 @app.route('/reserve', methods=['POST'])
 def reserve():
     if 'user_id' not in session:
@@ -90,17 +100,24 @@ def reserve():
     
     try:
         for seat_id in seat_ids:
-            query = "INSERT INTO reservations (showtime_id, user_id, seat_id, reservation_time, pay_status) VALUES (%s, %s, %s, NOW(), 'unpaid')"
-            cursor.execute(query, (showtime_id, user_id, seat_id))
+            # 이미 예약된 좌석인지 확인
+            check_query = "SELECT * FROM reservations WHERE showtime_id = %s AND seat_id = %s"
+            cursor.execute(check_query, (showtime_id, seat_id))
+            if cursor.fetchone():
+                flash(f'이미 예약된 좌석이 포함되어 있습니다. 다시 선택해주세요.', 'danger')
+                return redirect(url_for('dashboard'))
+            
+            # 좌석 예약 처리
+            insert_query = "INSERT INTO reservations (showtime_id, user_id, seat_id, reservation_time, pay_status) VALUES (%s, %s, %s, NOW(), 'unpaid')"
+            cursor.execute(insert_query, (showtime_id, user_id, seat_id))
         
-        db_connection.commit()
+        db_connection.commit()  # 트랜잭션 커밋
         flash('좌석이 예약되었습니다.', 'success')
     except mysql.connector.Error as err:
-        db_connection.rollback()
+        db_connection.rollback()  # 롤백
         flash(f'예약 중 오류가 발생했습니다: {err}', 'danger')
     
     return redirect(url_for('dashboard'))
-
 
 
 
