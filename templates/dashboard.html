@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 80px); /* 5개의 좌석을 한 줄에 표시 */
+            grid-gap: 10px;
+        }
+        .seat-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .seat-button {
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: #f0f0f0; /* 기본 배경색 */
+            color: #000; /* 기본 글자색 */
+        }
+        .seat-button.reserved {
+            background-color: #ff8080; /* 예매된 좌석 배경색 */
+            color: #fff; /* 예매된 좌석 글자색 */
+            cursor: not-allowed; /* 예매된 좌석은 클릭 불가능 */
+        }
+        .seat-button:hover {
+            background-color: #d9d9d9; /* 마우스 호버 배경색 */
+        }
+        .seat-button.checked {
+            background-color: #574fc2; /* 선택된 좌석 배경색 */
+            color: #ffffff; /* 선택된 좌석 글자색 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dashboard - Movie Book</h2>
+        
+        <!-- 메뉴 -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="movies-tab" data-toggle="tab" href="#movies">영화 정보 조회</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule">상영 시간표 조회</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="booking-tab" data-toggle="tab" href="#booking">예매하기</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history">예매 내역/결제</a>
+            </li>
+        </ul>
+        
+        <!-- 탭 내용 -->
+        <div class="tab-content mt-3">
+            <!-- 영화 정보 조회 -->
+            <div class="tab-pane fade show active" id="movies">
+                <!-- 검색 창 -->
+                <div class="form-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="영화 제목으로 검색">
+                </div>
+                
+                <!-- 영화 목록 -->
+                <div id="movieList">
+                    {% if movies %}
+                        {% for movie in movies %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ movie[1] }}</h5>
+                                    <p class="card-text">{{ movie[2] }}</p>
+                                    <p class="card-text"><small class="text-muted">장르: {{ movie[3] }}, 상영 시간: {{ movie[4] }}분</small></p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>영화 정보가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- 상영 시간표 조회 -->
+            <div class="tab-pane fade" id="schedule">
+                <div id="showtimesList">
+                    {% if showtimes %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>상영 시간표 ID</th>
+                                    <th>영화 제목</th>
+                                    <th>극장 이름</th>
+                                    <th>상영 시작 시간</th>
+                                    <th>상영 종료 시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for showtime in showtimes %}
+                                    <tr>
+                                        <td>{{ showtime[0] }}</td>
+                                        <td>{{ showtime[1] }}</td>
+                                        <td>{{ showtime[2] }}</td>
+                                        <td>{{ showtime[3] }}</td>
+                                        <td>{{ showtime[4] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>상영 시간표가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- 예매하기 -->
+            <div class="tab-pane fade" id="booking">
+                <h3>예매하기</h3>
+                <form id="bookingForm" action="{{ url_for('reserve') }}" method="post">
+                    <div class="form-group">
+                        <label for="showtimeSelect">상영 시간 선택:</label>
+                        <select class="form-control" id="showtimeSelect" name="showtime_id">
+                            {% for showtime in showtimes %}
+                                <option value="{{ showtime[0] }}">{{ showtime[1] }} - {{ showtime[2] }} - {{ showtime[3] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>좌석 선택:</label>
+                        <br>
+                        <div id="seatGrid" class="seat-grid">
+                            <!-- 좌석 버튼은 Ajax로 로드 -->
+                        </div>
+                    </div>
+                    <input type="hidden" name="seat_ids" id="seatIds">
+                    <button type="submit" class="btn btn-primary">예매하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 탭이 변경될 때마다 이벤트 처리
+            $('.nav-link').on('click', function() {
+                var tabId = $(this).attr('href');  
+                $(tabId).tab('show');  
+            });
+
+            // 초기 로딩 시 상영 시간표 데이터 가져오기
+            fetchShowtimes();
+            
+            // 영화 정보 조회 기능
+            $('#searchInput').on('input', function() {
+                var searchText = $(this).val().trim();
+                $.ajax({
+                    type: 'GET',
+                    url: '/search',
+                    data: { 'search_text': searchText },
+                    success: function(response) {
+                        $('#movieList').html(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            // 초기 로드 시 좌석 정보 불러오기
+            $('#showtimeSelect').change();
+        });
+
+        function fetchShowtimes() {
+            $.ajax({
+                type: 'GET',
+                url: '/showtimes', 
+                success: function(response) {
+                    $('#showtimesList').html(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $('#showtimeSelect').change(function() {
+            var showtime_id = $(this).val();
+            $.ajax({
+                url: '/seats/' + showtime_id,
+                type: 'GET',
+                success: function(response) {
+                    $('#seatGrid').html(response);
+                    attachSeatSelectionHandlers();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        function attachSeatSelectionHandlers() {
+            $('.seat-button').on('click', function() {
+                if (!$(this).hasClass('reserved')) {
+                    $(this).toggleClass('checked');
+                    updateSelectedSeats();
+                }
+            });
+        }
+
+        function updateSelectedSeats() {
+            var selectedSeats = [];
+            $('.seat-button.checked').each(function() {
+                selectedSeats.push($(this).val());
+            });
+            $('#seatIds').val(selectedSeats.join(','));
+        }
+    </script>
+</body>
+</html>

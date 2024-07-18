@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Movie Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Dashboard - Movie Book</h2>
+        
+        <!-- 메뉴 -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="movies-tab" data-toggle="tab" href="#movies">영화 정보 조회</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule">상영 시간표 조회</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="seats-tab" data-toggle="tab" href="#seats">좌석 선택</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="booking-tab" data-toggle="tab" href="#booking">예매하기</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment">결제하기</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="cancel-tab" data-toggle="tab" href="#cancel">예매 취소</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history">예매 내역</a>
+            </li>
+        </ul>
+        
+        <!-- 탭 내용 -->
+        <div class="tab-content mt-3">
+            <!-- 영화 정보 조회 -->
+            <div class="tab-pane fade show active" id="movies">
+                <!-- 검색 창 -->
+                <div class="form-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="영화 제목으로 검색">
+                </div>
+                
+                <!-- 영화 목록 -->
+                <div id="movieList">
+                    {% for movie in movies %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ movie.title }}</h5>
+                                <p class="card-text">{{ movie.movie_desc }}</p>
+                                <p class="card-text"><small class="text-muted">장르: {{ movie.genre }}, 상영 시간: {{ movie.duration }}분</small></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- 상영 시간표 조회 -->
+            <div class="tab-pane fade" id="schedule">
+                <!-- 상영 시간표 내용 -->
+                <div id="scheduleContent">
+                    <h3>상영 시간표</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>영화 제목</th>
+                                <th>상영 시작 시간</th>
+                                <th>상영 종료 시간</th>
+                                <th>상영관</th>
+                            </tr>
+                        </thead>
+                        <tbody id="showtimeList">
+                            <!-- 여기에 상영 시간표 데이터를 동적으로 추가할 예정 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 좌석 선택 -->
+            <div class="tab-pane fade" id="seats">
+                <!-- 좌석 선택 내용 -->
+                <p>좌석 선택 기능이 준비 중입니다.</p>
+            </div>
+            
+            <!-- 예매하기 -->
+            <div class="tab-pane fade" id="booking">
+                <!-- 예매하기 내용 -->
+                <p>예매하기 기능이 준비 중입니다.</p>
+            </div>
+            
+            <!-- 결제하기 -->
+            <div class="tab-pane fade" id="payment">
+                <!-- 결제하기 내용 -->
+                <p>결제하기 기능이 준비 중입니다.</p>
+            </div>
+            
+            <!-- 예매 취소 -->
+            <div class="tab-pane fade" id="cancel">
+                <!-- 예매 취소 내용 -->
+                <p>예매 취소 기능이 준비 중입니다.</p>
+            </div>
+            
+            <!-- 예매 내역 -->
+            <div class="tab-pane fade" id="history">
+                <!-- 예매 내역 내용 -->
+                <p>예매 내역 조회 기능이 준비 중입니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 탭이 변경될 때마다 이벤트 처리
+            $('.nav-link').on('click', function() {
+                var tabId = $(this).attr('href');  // 클릭한 탭의 ID를 가져옴
+                $(tabId).tab('show');  // 해당 탭을 보여줌
+                if (tabId === "#schedule") {
+                    fetchShowtimes(); // 상영 시간표 탭일 경우 데이터 가져오기
+                }
+            });
+    
+            // 초기 로딩 시 상영 시간표 데이터 가져오기
+            fetchShowtimes();
+    
+            // 상영 시간표 조회 함수
+            function fetchShowtimes() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/showtimes', // 실제 데이터를 가져올 엔드포인트
+                    success: function(response) {
+                        $('#showtimeList').empty(); // 기존 데이터 초기화
+                        response.forEach(function(showtime) {
+                            var row = '<tr>' +
+                                '<td>' + showtime.movie_title + '</td>' +
+                                '<td>' + showtime.start_time + '</td>' +
+                                '<td>' + showtime.end_time + '</td>' +
+                                '<td>' + showtime.theater_name + '</td>' +
+                                '</tr>';
+                            $('#showtimeList').append(row); // 테이블에 행 추가
+                        });
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    </script>
+    
+</body>
+</html>
