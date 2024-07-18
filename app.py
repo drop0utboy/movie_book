@@ -86,7 +86,7 @@ def reserve():
     
     user_id = session['user_id']
     showtime_id = request.form['showtime_id']
-    seat_ids = request.form.getlist('seat_ids')  # seat_ids를 받아옴
+    seat_ids = request.form.getlist('seat_ids')  # seat_ids를 받아옴dff
     
     try:
         for seat_id in seat_ids:
