@@ -86,11 +86,7 @@ def reserve():
     
     user_id = session['user_id']
     showtime_id = request.form['showtime_id']
-<<<<<<< HEAD
     seat_ids = request.form.getlist('seat_ids')  # seat_ids를 받아옴 이걸 다시 되돌려보자
-=======
-    seat_ids = request.form.getlist('seat_ids')  # seat_ids를 받아옴
->>>>>>> parent of 7e1aa26 ('second')
     
     try:
         for seat_id in seat_ids:
