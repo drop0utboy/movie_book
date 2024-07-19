@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import mysql.connector
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # 세션을 위한 비밀키 설정
@@ -23,19 +26,54 @@ def login_page():
 def login():
     username = request.form['username']
     password = request.form['password']
-    
-    # 사용자 정보 검증
-    query = "SELECT * FROM users WHERE username = %s AND user_password = %s"
-    cursor.execute(query, (username, password))
-    user = cursor.fetchone()
-    
-    if user:
-        session['user_id'] = user[0]  # 사용자 ID를 세션에 저장
+
+    query = "SELECT user_password FROM users WHERE username = %s"
+    cursor.execute(query, (username,))
+    result = cursor.fetchone()
+
+    if result and check_password_hash(result[0], password):
+        session['user_id'] = username  # 또는 user_id 사용
         flash('로그인 성공!', 'success')
         return redirect(url_for('dashboard'))
     else:
         flash('로그인 실패. 아이디 또는 비밀번호를 확인하세요.', 'danger')
         return redirect(url_for('login_page'))
+
+
+
+# 회원가입 페이지
+@app.route('/register', methods=['GET'])
+def register_page():
+    return render_template('register.html')
+
+# 회원가입 처리
+@app.route('/register', methods=['POST'])
+def register():
+    username = request.form['username']
+    password = request.form['password']
+    email = request.form['email']
+
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+    try:
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        if cursor.fetchone():
+            flash('이미 사용 중인 사용자 이름입니다.', 'danger')
+            return redirect(url_for('register_page'))
+
+        insert_query = "INSERT INTO users (username, user_password, email) VALUES (%s, %s, %s)"
+        cursor.execute(insert_query, (username, hashed_password, email))
+        db_connection.commit()
+
+        flash('회원가입이 완료되었습니다. 로그인해 주세요.', 'success')
+        return redirect(url_for('login_page'))
+
+    except mysql.connector.Error as err:
+        db_connection.rollback()
+        flash(f'회원가입 중 오류가 발생했습니다: {err}', 'danger')
+        return redirect(url_for('register_page'))
+
+
 
 # 대시보드
 @app.route('/dashboard')
@@ -107,6 +145,9 @@ def reserve():
                 flash(f'이미 예약된 좌석이 포함되어 있습니다. 다시 선택해주세요.', 'danger')
                 return redirect(url_for('dashboard'))
             
+            # 로그 추가: 삽입 쿼리 실행 전
+            app.logger.info(f"Inserting reservation for seat_id {seat_id}, showtime_id {showtime_id}, user_id {user_id}")
+
             # 좌석 예약 처리
             insert_query = "INSERT INTO reservations (showtime_id, user_id, seat_id, reservation_time, pay_status) VALUES (%s, %s, %s, NOW(), 'unpaid')"
             cursor.execute(insert_query, (showtime_id, user_id, seat_id))
@@ -115,9 +156,14 @@ def reserve():
         flash('좌석이 예약되었습니다.', 'success')
     except mysql.connector.Error as err:
         db_connection.rollback()  # 롤백
+        # 로그 추가: 오류 메시지 출력
+        app.logger.error(f"Database error: {err}")
         flash(f'예약 중 오류가 발생했습니다: {err}', 'danger')
     
     return redirect(url_for('dashboard'))
+
+
+
 
 
 
