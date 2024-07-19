@@ -1,0 +1,100 @@
+2024-07-19 11:28:34,296 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:28:34,296 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:28:38,887 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:28:38,887 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:28:38,903 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:28:39,414 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:28:39,414 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:28:53,640 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:28:53,640 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:28:53,640 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:28:54,043 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:28:54,059 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:28:57,582 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:28:57,582 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:28:57,582 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:28:57,995 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:28:57,995 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:29:13,966 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:29:13] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:29:18,848 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:29:18] "GET /seats/1 HTTP/1.1" 200 -
+2024-07-19 11:29:22,794 - app - INFO - User ID: admin
+2024-07-19 11:29:22,794 - app - INFO - Showtime ID: 1
+2024-07-19 11:29:22,794 - app - INFO - Seat IDs: []
+2024-07-19 11:29:22,795 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:29:22] "[32mPOST /reserve HTTP/1.1[0m" 302 -
+2024-07-19 11:29:22,799 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:29:22] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:29:23,910 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:29:23] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:33:00,601 - werkzeug - INFO -  * Detected change in 'c:\\Users\\606-20\\Git\\myproject\\movie_book\\app.py', reloading
+2024-07-19 11:33:00,640 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:33:01,097 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:33:01,100 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:34:25,655 - werkzeug - INFO -  * Detected change in 'c:\\Users\\606-20\\Git\\myproject\\movie_book\\app.py', reloading
+2024-07-19 11:34:25,693 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:34:26,100 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:34:26,100 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:34:31,484 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:34:31,484 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:34:31,484 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:34:31,917 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:34:31,917 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:34:34,772 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:34:34,772 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:34:34,788 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:34:35,207 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:34:35,207 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:34:39,325 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:34:39] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:34:42,355 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:34:42] "GET /seats/1 HTTP/1.1" 200 -
+2024-07-19 11:34:45,972 - app - INFO - User ID: admin
+2024-07-19 11:34:45,972 - app - INFO - Showtime ID: 1
+2024-07-19 11:34:45,972 - app - INFO - Seat IDs: []
+2024-07-19 11:34:45,973 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:34:45] "[32mPOST /reserve HTTP/1.1[0m" 302 -
+2024-07-19 11:34:45,977 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:34:45] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:34:47,442 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:34:47] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:35:07,379 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:35:07,379 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:35:26,096 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:26] "GET / HTTP/1.1" 200 -
+2024-07-19 11:35:32,802 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:32] "[32mPOST /login HTTP/1.1[0m" 302 -
+2024-07-19 11:35:32,802 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:32] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:35:36,241 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:36] "GET /seats/1 HTTP/1.1" 200 -
+2024-07-19 11:35:40,257 - app - INFO - User ID: admin
+2024-07-19 11:35:40,257 - app - INFO - Showtime ID: 1
+2024-07-19 11:35:40,258 - app - INFO - Seat IDs: []
+2024-07-19 11:35:40,258 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:40] "[32mPOST /reserve HTTP/1.1[0m" 302 -
+2024-07-19 11:35:40,264 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:40] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:35:41,647 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:35:41] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:41:26,286 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:41:26,286 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:41:26,286 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:41:29,416 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-07-19 11:41:29,416 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-19 11:41:29,417 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:41:29,823 - werkzeug - WARNING -  * Debugger is active!
+2024-07-19 11:41:29,823 - werkzeug - INFO -  * Debugger PIN: 826-922-887
+2024-07-19 11:41:32,811 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:32] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:41:36,448 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:36] "GET /search?search_text=คร HTTP/1.1" 200 -
+2024-07-19 11:41:36,638 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:36] "GET /search?search_text=คร HTTP/1.1" 200 -
+2024-07-19 11:41:36,665 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:36] "[35m[1mGET /search?search_text=ครคร HTTP/1.1[0m" 500 -
+2024-07-19 11:41:37,502 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:37] "GET /search?search_text=คร HTTP/1.1" 200 -
+2024-07-19 11:41:37,664 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:37] "GET /search?search_text= HTTP/1.1" 200 -
+2024-07-19 11:41:41,943 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:41] "GET /search?search_text=m HTTP/1.1" 200 -
+2024-07-19 11:41:42,102 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:42] "GET /search?search_text=mi HTTP/1.1" 200 -
+2024-07-19 11:41:47,228 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:47] "GET /seats/1 HTTP/1.1" 200 -
+2024-07-19 11:41:53,323 - app - INFO - User ID: admin
+2024-07-19 11:41:53,323 - app - INFO - Showtime ID: 1
+2024-07-19 11:41:53,323 - app - INFO - Seat IDs: []
+2024-07-19 11:41:53,323 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:53] "[32mPOST /reserve HTTP/1.1[0m" 302 -
+2024-07-19 11:41:53,327 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:53] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:41:54,477 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:41:54] "GET /dashboard HTTP/1.1" 200 -
+2024-07-19 11:46:41,322 - werkzeug - INFO - 127.0.0.1 - - [19/Jul/2024 11:46:41] "GET /seats/1 HTTP/1.1" 200 -
+2024-07-19 11:48:04,402 - werkzeug - INFO -  * Detected change in 'c:\\Users\\606-20\\Git\\myproject\\movie_book\\app.py', reloading
+2024-07-19 11:48:04,433 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:49:21,408 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 11:56:17,631 - werkzeug - INFO -  * Restarting with stat
+2024-07-19 12:03:20,882 - werkzeug - INFO -  * Restarting with stat
