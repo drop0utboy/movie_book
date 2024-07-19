@@ -185,18 +185,22 @@
             $('#reserveBtn').on('click', function() {
                 var selectedSeats = [];
                 $('#seatsContainer .seat-button.checked').each(function() {
-                    selectedSeats.push($(this).val());
+                    selectedSeats.push($(this).attr('value')); // seat_id를 가져옴
                 });
-
+// alert('1ㅇㅇㅇㅇㅇㅇ'+selectedSeats.length);
                 if (selectedSeats.length === 0) {
                     alert('좌석을 선택하세요.');
                     return;
                 }
+// alert('2ㅇㅇㅇㅇㅇㅇ'+selectedSeats[1]);
 
                 var showtimeId = $('#showtimeSelect').val();
+// alert('선택된 좌석 ID: ' + selectedSeats.join(', '));
+// alert('3ㅇㅇㅇㅇㅇ'+selectedSeats.length);
                 $.post('{{ url_for("reserve") }}', {
                     showtime_id: showtimeId,
-                    seat_ids: selectedSeats
+                    // seat_ids: selectedSeats
+                    seat_ids: JSON.stringify(selectedSeats) // JSON.stringify로 배열을 문자열로 변환 comment : 리스트가 post로 보내지지 않기 때문에 선택한 방식
                 }, function() {
                     alert('예매가 완료되었습니다.');
                     window.location.reload();

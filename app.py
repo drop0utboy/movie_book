@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import json
 
 
 app = Flask(__name__)
@@ -22,22 +22,39 @@ def login_page():
     return render_template('login.html')
 
 # 로그인 처리
+# @app.route('/login', methods=['POST'])
+# def login():
+#     username = request.form['user_id']
+#     password = request.form['password']
+
+#     query = "SELECT user_password FROM users WHERE username = %s"
+#     cursor.execute(query, (username,))
+#     result = cursor.fetchone()
+
+#     if result and check_password_hash(result[0], password):
+#         session['user_id'] = username # 또는 user_id 사용
+#         flash('로그인 성공!', 'success')
+#         return redirect(url_for('dashboard'))
+#     else:
+#         flash('로그인 실패. 아이디 또는 비밀번호를 확인하세요.', 'danger')
+#         return redirect(url_for('login_page'))
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
+    username = request.form['user_id']
     password = request.form['password']
 
-    query = "SELECT user_password FROM users WHERE username = %s"
+    query = "SELECT user_id, user_password FROM users WHERE username = %s"
     cursor.execute(query, (username,))
     result = cursor.fetchone()
 
-    if result and check_password_hash(result[0], password):
-        session['user_id'] = username  # 또는 user_id 사용
+    if result and check_password_hash(result[1], password):
+        session['user_id'] = result[0]  # 실제 user_id를 세션에 저장
         flash('로그인 성공!', 'success')
         return redirect(url_for('dashboard'))
     else:
         flash('로그인 실패. 아이디 또는 비밀번호를 확인하세요.', 'danger')
         return redirect(url_for('login_page'))
+
 
 
 
@@ -132,10 +149,14 @@ def reserve():
         flash('로그인이 필요합니다.', 'danger')
         return redirect(url_for('login_page'))
     
-    user_id = session['user_id']
-    showtime_id = request.form['showtime_id']
-    seat_ids = request.form.getlist('seat_ids')  # seat_ids를 받아옴
-    
+    user_id = int(session['user_id'])
+    showtime_id = int(request.form['showtime_id'])
+    seat_ids = request.form.get('seat_ids')  # 문자열로 받아옴
+    seat_ids = json.loads(seat_ids)  # JSON 문자열을 리스트로 변환
+    seat_ids = [int(seat_id) for seat_id in seat_ids]  # 정수형으로 변환
+
+    print('Received seat_ids:', seat_ids)  # 디버깅용
+
     try:
         for seat_id in seat_ids:
             # 이미 예약된 좌석인지 확인
@@ -145,9 +166,6 @@ def reserve():
                 flash(f'이미 예약된 좌석이 포함되어 있습니다. 다시 선택해주세요.', 'danger')
                 return redirect(url_for('dashboard'))
             
-            # 로그 추가: 삽입 쿼리 실행 전
-            app.logger.info(f"Inserting reservation for seat_id {seat_id}, showtime_id {showtime_id}, user_id {user_id}")
-
             # 좌석 예약 처리
             insert_query = "INSERT INTO reservations (showtime_id, user_id, seat_id, reservation_time, pay_status) VALUES (%s, %s, %s, NOW(), 'unpaid')"
             cursor.execute(insert_query, (showtime_id, user_id, seat_id))
@@ -161,6 +179,7 @@ def reserve():
         flash(f'예약 중 오류가 발생했습니다: {err}', 'danger')
     
     return redirect(url_for('dashboard'))
+
 
 
 
