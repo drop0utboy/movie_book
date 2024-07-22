@@ -100,6 +100,8 @@ def dashboard():
         flash('로그인이 필요합니다.', 'danger')
         return redirect(url_for('login_page'))
     
+    user_id = session['user_id']
+    
     # 영화 목록 가져오기
     cursor.execute("SELECT * FROM movies")
     movies = cursor.fetchall()
@@ -113,8 +115,23 @@ def dashboard():
     """
     cursor.execute(query)
     showtimes = cursor.fetchall()
+
+    # 예약 목록 가져오기
+    query = """
+    SELECT r.reservation_id, m.title, t.theater_name, s.start_time, se.seat_number, r.pay_status
+    FROM reservations r
+    JOIN showtimes s ON r.showtime_id = s.showtime_id
+    JOIN movies m ON s.movie_id = m.movie_id
+    JOIN theaters t ON s.theater_id = t.theater_id
+    JOIN seats se ON r.seat_id = se.seat_id
+    WHERE r.user_id = %s
+    """
+    cursor.execute(query, (user_id,))
+    reservations = cursor.fetchall()
+
     
-    return render_template('dashboard.html', movies=movies, showtimes=showtimes)
+    return render_template('dashboard.html', movies=movies, showtimes=showtimes, reservations=reservations)
+
 
 
 
@@ -209,6 +226,47 @@ def search():
     return movie_html
 
 
+
+
+# 결제 처리
+@app.route('/pay', methods=['POST'])
+def pay():
+    if 'user_id' not in session:
+        flash('로그인이 필요합니다.', 'danger')
+        return redirect(url_for('login_page'))
+
+    reservation_id = int(request.form['reservation_id'])
+
+    try:
+        update_query = "UPDATE reservations SET pay_status = 'paid' WHERE reservation_id = %s"
+        cursor.execute(update_query, (reservation_id,))
+        db_connection.commit()
+        flash('결제가 완료되었습니다.', 'success')
+    except mysql.connector.Error as err:
+        db_connection.rollback()
+        flash(f'결제 중 오류가 발생했습니다: {err}', 'danger')
+
+    return redirect(url_for('dashboard'))
+
+# 예매 취소 처리
+@app.route('/cancel', methods=['POST'])
+def cancel():
+    if 'user_id' not in session:
+        flash('로그인이 필요합니다.', 'danger')
+        return redirect(url_for('login_page'))
+
+    reservation_id = int(request.form['reservation_id'])
+
+    try:
+        delete_query = "DELETE FROM reservations WHERE reservation_id = %s"
+        cursor.execute(delete_query, (reservation_id,))
+        db_connection.commit()
+        flash('예매가 취소되었습니다.', 'success')
+    except mysql.connector.Error as err:
+        db_connection.rollback()
+        flash(f'예매 취소 중 오류가 발생했습니다: {err}', 'danger')
+
+    return redirect(url_for('dashboard'))
 
 
 

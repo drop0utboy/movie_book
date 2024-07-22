@@ -8,18 +8,18 @@
     <style>
         .seat-grid {
             display: grid;
-            grid-template-columns: repeat(5, 80px); /* 5개의 좌석을 한 줄에 표시 */
-            grid-gap: 10px;
+            grid-template-columns: repeat(10, 65px); /* n개의 좌석을 한 줄에 표시 */
+            grid-gap: 5px;
         }
         .seat-label {
             display: block;
             margin-bottom: 5px;
         }
         .seat-button {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             text-align: center;
-            line-height: 80px;
+            line-height: 60px;
             border: 1px solid #ccc;
             cursor: pointer;
             background-color: #f0f0f0; /* 기본 배경색 */
@@ -140,7 +140,49 @@
             
             <!-- 예매 내역/결제 -->
             <div class="tab-pane fade" id="history">
-                <!-- 예매 내역/결제 구현 예정 -->
+                <h3>예매 내역/결제</h3>
+                <div>
+                    {% if reservations %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>영화 제목</th>
+                                    <th>상영관</th>
+                                    <th>시작 시간</th>
+                                    <th>좌석 번호</th>
+                                    <th>결제 상태</th>
+                                    <th>액션</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation in reservations %}
+                                    <tr>
+                                        <td>{{ reservation[1] }}</td>
+                                        <td>{{ reservation[2] }}</td>
+                                        <td>{{ reservation[3] }}</td>
+                                        <td>{{ reservation[4] }}</td>
+                                        <td>{{ reservation[5] }}</td>
+                                        <td>
+                                            {% if reservation[5] == 'unpaid' %}
+                                                <form action="{{ url_for('pay') }}" method="post" style="display:inline;">
+                                                    <input type="hidden" name="reservation_id" value="{{ reservation[0] }}">
+                                                    <button type="submit" class="btn btn-success">결제하기</button>
+                                                </form>
+                                            {% else %}
+                                                <form action="{{ url_for('cancel') }}" method="post" style="display:inline;">
+                                                    <input type="hidden" name="reservation_id" value="{{ reservation[0] }}">
+                                                    <button type="submit" class="btn btn-danger">예매 취소</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>예매 내역이 없습니다.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
         
