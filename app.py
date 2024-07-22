@@ -138,13 +138,24 @@ def dashboard():
 # 좌석 정보 가져오기
 @app.route('/seats/<int:showtime_id>')
 def seats(showtime_id):
+    # 상영 시간표의 상영관 정보를 가져옵니다
+    showtime_query = "SELECT theater_id FROM showtimes WHERE showtime_id = %s"
+    cursor.execute(showtime_query, (showtime_id,))
+    result = cursor.fetchone()
+    if not result:
+        return "상영 시간표를 찾을 수 없습니다.", 404
+
+    theater_id = result[0]
+
+    # 해당 상영관의 좌석 정보만 가져옵니다
     query = """
     SELECT se.seat_id, se.seat_number, 
            CASE WHEN re.seat_id IS NOT NULL THEN 1 ELSE 0 END AS reserved
     FROM seats se
     LEFT JOIN reservations re ON se.seat_id = re.seat_id AND re.showtime_id = %s
+    WHERE se.theater_id = %s
     """
-    cursor.execute(query, (showtime_id,))
+    cursor.execute(query, (showtime_id, theater_id))
     seats = cursor.fetchall()
     
     seat_buttons_html = ""
@@ -156,6 +167,7 @@ def seats(showtime_id):
         seat_buttons_html += f'<button class="{button_class}" value="{seat_id}">{seat_number}</button>'
     
     return seat_buttons_html
+
 
 
 
