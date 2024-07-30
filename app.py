@@ -284,7 +284,7 @@ def cancel():
 
 
 
-# 로그아웃
+# 로그아웃!
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
